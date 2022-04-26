@@ -1,3 +1,5 @@
+from mrcnn import model as modellib, utils
+from mrcnn.config import Config
 import json
 import os
 from re import S
@@ -10,8 +12,6 @@ import skimage.io
 ROOT_DIR = os.path.abspath("./")
 
 sys.path.append(ROOT_DIR)
-from mrcnn.config import Config
-from mrcnn import model as modellib, utils
 
 PATH_TO_COCO_WEIGHTS = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
@@ -57,59 +57,62 @@ class ElevatorPanelDataset(utils.Dataset):
         annotations = [a for a in annotations if a['regions']]
 
         # Add the images
-        for annotation in annotations:
-            # get all the shape attributes from the regions list of annotation
-            # store in a list
-            masks = [region["shape_attributes"] for region in annotation["regions"]]
-            mask_ids = [region["region_attributes"] for region in annotation["regions"]]
+        for a in annotations:
+            if type(a['regions']) is dict:
+                polygons = [r['shape_attributes']
+                            for r in a['regions'].values()]
+            else:
+                polygons = [r['shape_attributes'] for r in a['regions']]
 
-            image_path = os.path.join(dataset_dir, annotation['filename'])
+            ids = []
+            for region in a["regions"]:
+                ei = region["region_attributes"]["Elevator Item"]
+                class_id = 1 if 'Label' in ei else 2
+                ids.append(class_id)
+
+            image_path = os.path.join(dataset_dir, a['filename'])
             image = skimage.io.imread(image_path)
             height, width = image.shape[:2]
 
             self.add_image("elevator_panel",
-                           image_id=annotation['filename'],  # use the file name as unique img id
+                           # use the file name as unique img id
+                           image_id=a['filename'],
                            path=image_path,
                            width=width,
                            height=height,
-                           masks=masks,
-                           mask_ids=mask_ids)
+                           polygons=polygons,
+                           ids=ids)
 
     def load_mask(self, image_id):
-        # If not a balloon dataset image, delegate to parent class.
         image_info = self.image_info[image_id]
-        if image_info["source"] != "balloon":
+        if image_info["source"] != "elevator_panel":
             return super(self.__class__, self).load_mask(image_id)
 
         # Convert polygons to a bitmap mask of shape
         # [height, width, instance_count]
         info = self.image_info[image_id]
-        m = np.zeros([info["height"], info["width"], len(info["masks"])],
+        m = np.zeros([info["height"], info["width"], len(info["polygons"])],
                      dtype=np.uint8)
 
-        region_info = info['region_info']
         instance_masks = []
         class_ids = []
-        for i, p in enumerate(info["masks"]):
+        for i, p in enumerate(info["polygons"]):
             # Get indexes of pixels inside the polygon and set them to 1
             if p["name"] == "circle":
-                rr, cc = skimage.draw.circle(r=p['cx'], c=p['cy'], radius=p['r'])
+                rr, cc = skimage.draw.circle(
+                    r=p['cx'], c=p['cy'], radius=p['r'])
             elif p["name"] == "rect":
-                start = (p['x'], p['y'])
-                extent = (p['width'], p['height'])
+                start = (p['y'], p['x'])
+                extent = (p['height'], p['width'])
                 rr, cc = skimage.draw.rectangle(start=start, extent=extent)
             elif p["name"] == "ellipse":
                 rr, cc = skimage.draw.ellipse(r=p['cx'], c=p['cy'], r_radius=p['rx'], c_radius=p[
                     'ry'], rotation=np.deg2rad(p['theta']))
             else:
-                rr, cc = skimage.draw.polygon(r=p['all_points_y'], c=p['all_points_x'])
+                rr, cc = skimage.draw.polygon(
+                    r=p['all_points_y'], c=p['all_points_x'])
 
-            if len(region_info['Elevator Item']) == 1:
-                # mask for button or label
-                class_id = 1 if region_info['Elevator Item']['Button'] else 2
-            else:
-                # mask for a button and label
-                class_id = 3
+            class_id = image_info["ids"][i]
 
             m[rr, cc, i] = class_id
             instance_masks.append(np.ma.make_mask(m))
