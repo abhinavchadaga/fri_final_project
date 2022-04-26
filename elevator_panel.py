@@ -44,6 +44,7 @@ class ElevatorPanelDataset(utils.Dataset):
         # add classes
         self.add_class("elevator_panel", 1, "label")
         self.add_class("elevator_panel", 2, "button")
+        self.add_class("elevator_panel", 3, "label_and_button")
 
         assert subset in ["train", "val"]
         dataset_dir = os.path.join(dataset_dir, subset)
@@ -83,5 +84,45 @@ class ElevatorPanelDataset(utils.Dataset):
         # Convert polygons to a bitmap mask of shape
         # [height, width, instance_count]
         info = self.image_info[image_id]
-        mask = np.zeros([info["height"], info["width"], len(info["masks"])],
-                        dtype=np.uint8)
+        m = np.zeros([info["height"], info["width"], len(info["masks"])],
+                     dtype=np.uint8)
+
+        region_info = info['region_info']
+        instance_masks = []
+        class_ids = []
+        for i, p in enumerate(info["masks"]):
+            # Get indexes of pixels inside the polygon and set them to 1
+            if p["name"] == "circle":
+                rr, cc = skimage.draw.circle(r=p['cx'], c=p['cy'], radius=p['r'])
+            elif p["name"] == "rect":
+                start = (p['x'], p['y'])
+                extent = (p['width'], p['height'])
+                rr, cc = skimage.draw.rectangle(start=start, extent=extent)
+            elif p["name"] == "ellipse":
+                rr, cc = skimage.draw.ellipse(r=p['cx'], c=p['cy'], r_radius=p['rx'], c_radius=p[
+                    'ry'], rotation=np.deg2rad(p['theta']))
+            else:
+                rr, cc = skimage.draw.polygon(r=p['all_points_y'], c=p['all_points_x'])
+
+            if len(region_info['Elevator Item']) == 1:
+                # mask for button or label
+                class_id = 1 if region_info['Elevator Item']['Button'] else 2
+            else:
+                # mask for a button and label
+                class_id = 3
+
+            m[rr, cc, i] = class_id
+            instance_masks.append(np.ma.make_mask(m))
+            class_ids.append(class_id)
+
+        masks = np.stack(instance_masks, axis=2).astype(np.bool)
+        class_ids = np.array(class_ids, dtype=np.int32)
+
+        return masks, class_ids
+
+    def image_reference(self, image_id):
+        info = self.image_info[image_id]
+        if info["source"] == "elevator_panel":
+            return info["path"]
+        else:
+            super(self.__class__, self).image_reference(image_id)
