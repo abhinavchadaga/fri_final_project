@@ -1,3 +1,4 @@
+from pickletools import uint8
 from mrcnn import model as modellib, utils
 from mrcnn.config import Config
 import json
@@ -42,7 +43,7 @@ class ElevatorPanelDataset(utils.Dataset):
 
     def load_elevator(self, dataset_dir, subset):
         # add classes
-        self.add_class("elevator_panel", 1, "button")
+        self.add_class("elevator_panel", 1, "label")
         self.add_class("elevator_panel", 2, "button")
         self.add_class("elevator_panel", 3, "label_and_button")
 
@@ -56,35 +57,6 @@ class ElevatorPanelDataset(utils.Dataset):
         # aka images with no annotations
         annotations = [a for a in annotations if a['regions']]
 
-        # # Add the images
-        # for a in annotations:
-        #     if type(a['regions']) is dict:
-        #         polygons = [r['shape_attributes']
-        #                     for r in a['regions'].values()]
-        #     else:
-        #         polygons = [r['shape_attributes'] for r in a['regions']]
-
-        #     ids = []
-        #     for region in a["regions"]:
-        #         if len(region["region_attributes"]["Elevator Item"]) == 2:
-        #             class_id = 3
-        #         else:
-        #             ei = region["region_attributes"]["Elevator Item"]
-        #             class_id = 1 if 'Label' in ei else 2
-        #             ids.append(class_id)
-
-        #     image_path = os.path.join(dataset_dir, a['filename'])
-        #     image = skimage.io.imread(image_path)
-        #     height, width = image.shape[:2]
-
-        #     self.add_image("elevator_panel",
-        #                    # use the file name as unique img id
-        #                    image_id=a['filename'],
-        #                    path=image_path,
-        #                    width=width,
-        #                    height=height,
-        #                    polygons=polygons,
-        #                    ids=ids)
         # Add images
         for a in annotations:
             # Get the x, y coordinaets of points of the polygons that make up
@@ -99,12 +71,18 @@ class ElevatorPanelDataset(utils.Dataset):
 
             ids = []
             for region in a["regions"]:
-                if len(region["region_attributes"]["Elevator Item"]) == 2:
+                # if len(region["region_attributes"]["Elevator Item"]) == 2:
+                #     class_id = 3
+                # else:
+                ei = region["region_attributes"]["Elevator Item"]
+                if "Button" in ei and ei["Button"] == True and "Label" in ei and ei["Label"] == True:
                     class_id = 3
+                elif "Button" in ei and ei["Button"]:
+                    class_id = 2
                 else:
-                    ei = region["region_attributes"]["Elevator Item"]
-                    class_id = 1 if 'Label' in ei else 2
-                    ids.append(class_id)
+                    class_id = 1
+                # class_id = 1 if 'Label' in ei else 2
+                ids.append(class_id)
 
             # load_mask() needs the image size to convert polygons to masks.
             # Unfortunately, VIA doesn't include it in JSON, so we must read
@@ -123,51 +101,22 @@ class ElevatorPanelDataset(utils.Dataset):
 
     def load_mask(self, image_id):
         image_info = self.image_info[image_id]
+        polygons = image_info["polygons"]
+        count = len(polygons)
         if image_info["source"] != "elevator_panel":
             return super(self.__class__, self).load_mask(image_id)
 
         # Convert polygons to a bitmap mask of shape
         # [height, width, instance_count]
-        info = self.image_info[image_id]
-        m = np.zeros([info["height"], info["width"], len(info["polygons"])],
-                     dtype=np.uint8)
-
-        # for i, p in enumerate(info["polygons"]):
-        #     # Get indexes of pixels inside the polygon and set them to 1
-        #     if p["name"] == "circle":
-        #         rr, cc = skimage.draw.circle(
-        #             r=p['cx'], c=p['cy'], radius=p['r'])
-        #     elif p["name"] == "rect":
-        #         start = (p['y'], p['x'])
-        #         extent = (p['height'], p['width'])
-        #         rr, cc = skimage.draw.rectangle(start=start, extent=extent)
-        #     elif p["name"] == "ellipse":
-        #         rr, cc = skimage.draw.ellipse(r=p['cx'], c=p['cy'], r_radius=p['rx'], c_radius=p[
-        #             'ry'], rotation=np.deg2rad(p['theta']))
-        #     else:
-        #         rr, cc = skimage.draw.polygon(
-        #             r=p['all_points_y'], c=p['all_points_x'])
-
-        #     class_id = image_info["ids"][i]
-
-        #     m[rr, cc, i] = class_id
-
-        #     instance_masks.append(np.ma.make_mask(m))
-        #     class_ids.append(class_id)
-
-        # masks = np.stack(instance_masks, axis=2).astype(np.bool)
-        # class_ids = np.array(class_ids, dtype=np.int32)
 
         info = self.image_info[image_id]
-        mask = np.zeros([info["height"], info["width"], len(info["polygons"])],
+        mask = np.zeros([info["height"], info["width"], count],
                         dtype=np.uint8)
 
         print('img height: ', info['height'])
         print('img width: ', info['width'])
 
-        class_ids = info["ids"]
-
-        for i, p in enumerate(info["polygons"]):
+        for i, p in enumerate(polygons):
             # Get indexes of pixels inside the polygon and set them to 1
             # rr, cc = skimage.draw.polygon(p['all_points_y'], p['all_points_x'])
             if p["name"] == "circle":
@@ -186,7 +135,11 @@ class ElevatorPanelDataset(utils.Dataset):
 
             mask[rr, cc, i] = 1
 
-        return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
+        class_ids = np.array(image_info["ids"], dtype=np.int32)
+        print(class_ids)
+
+        # np.ones([mask.shape[-1]], dtype=np.int32)
+        return mask.astype(np.bool), class_ids
 
     def image_reference(self, image_id):
         info = self.image_info[image_id]
