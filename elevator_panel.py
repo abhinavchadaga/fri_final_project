@@ -17,7 +17,7 @@ import sys
 import json
 import datetime
 import numpy as np
-import skimage.draw
+import skimage
 
 ROOT_DIR = os.path.abspath("./")
 
@@ -38,7 +38,7 @@ class ElevatorPanelConfig(Config):
 
     IMAGES_PER_GPU = 2
 
-    NUM_CLASSES = 1 + 1
+    NUM_CLASSES = 1 + 3
 
     STEPS_PER_EPOCH = 100
 
@@ -111,6 +111,7 @@ class ElevatorPanelDataset(utils.Dataset):
 
     def load_mask(self, image_id):
         image_info = self.image_info[image_id]
+        # print(image_info)
         polygons = image_info["polygons"]
         count = len(polygons)
         if image_info["source"] != "elevator_panel":
@@ -123,15 +124,14 @@ class ElevatorPanelDataset(utils.Dataset):
         mask = np.zeros([info["height"], info["width"], count],
                         dtype=np.uint8)
 
-        print('img height: ', info['height'])
-        print('img width: ', info['width'])
+        # print('img height: ', info['height'])
+        # print('img width: ', info['width'])
 
         for i, p in enumerate(polygons):
             # Get indexes of pixels inside the polygon and set them to 1
-            # rr, cc = skimage.draw.polygon(p['all_points_y'], p['all_points_x'])
+            # print(p)
             if p["name"] == "circle":
-                rr, cc = skimage.draw.circle(
-                    r=p['cy'], c=p['cx'], radius=p['r'])
+                rr, cc = skimage.draw.circle(r=p['cy'], c=p['cx'], radius=p['r'])
             elif p["name"] == "rect":
                 start = (p['y'], p['x'])
                 extent = (p['height'], p['width'])
@@ -146,7 +146,7 @@ class ElevatorPanelDataset(utils.Dataset):
             mask[rr, cc, i] = 1
 
         class_ids = np.array(image_info["ids"], dtype=np.int32)
-        print(class_ids)
+        # print(class_ids)
 
         # np.ones([mask.shape[-1]], dtype=np.int32)
         return mask.astype(np.bool), class_ids
