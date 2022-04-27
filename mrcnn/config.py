@@ -66,7 +66,7 @@ class Config(object):
     # Size of the fully-connected layers in the classification graph
     FPN_CLASSIF_FC_LAYERS_SIZE = 1024
 
-    # Size of the top-down layers used to build the feature pyramid
+    # Size of the top-down layers used to b`ui`ld the feature pyramid
     TOP_DOWN_PYRAMID_SIZE = 256
 
     # Number of classification classes (including background)
