@@ -1,0 +1,249 @@
+{
+    "elevatorbuttons.jpg3138338": {
+        "filename": "elevatorbuttons.jpg",
+        "size": 3138338,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1330,
+                    "cy": 699,
+                    "rx": 188,
+                    "ry": 198,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1834,
+                    "cy": 709,
+                    "rx": 177.281,
+                    "ry": 180.722,
+                    "theta": -0.019
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1326,
+                    "cy": 1190,
+                    "rx": 181,
+                    "ry": 188,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1325,
+                    "cy": 1653,
+                    "rx": 177.281,
+                    "ry": 180.69,
+                    "theta": -3.142
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1807,
+                    "cy": 1657,
+                    "rx": 167,
+                    "ry": 167,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1821,
+                    "cy": 1193,
+                    "rx": 170,
+                    "ry": 177,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1323,
+                    "cy": 2277,
+                    "rx": 173.871,
+                    "ry": 174.005,
+                    "theta": 3.102
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1793,
+                    "cy": 2284,
+                    "rx": 164,
+                    "ry": 160,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 838,
+                    "cy": 2748,
+                    "rx": 167.053,
+                    "ry": 162.074,
+                    "theta": 0.255
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1299,
+                    "cy": 2755,
+                    "rx": 164,
+                    "ry": 157,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1787,
+                    "cy": 2760,
+                    "rx": 174,
+                    "ry": 164,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 2254,
+                    "cy": 2775,
+                    "rx": 164,
+                    "ry": 160,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 842,
+                    "cy": 3215,
+                    "rx": 164.529,
+                    "ry": 163.644,
+                    "theta": 0.104
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1292,
+                    "cy": 3221,
+                    "rx": 160,
+                    "ry": 150,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 1776,
+                    "cy": 3229,
+                    "rx": 167,
+                    "ry": 157,
+                    "theta": 0
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Label": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "ellipse",
+                    "cx": 2233,
+                    "cy": 3246,
+                    "rx": 160.234,
+                    "ry": 150.355,
+                    "theta": 3.074
+                },
+                "region_attributes": {
+                    "Elevator Item": {
+                        "Button": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {}
+    }
+}

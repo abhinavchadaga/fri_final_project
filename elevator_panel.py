@@ -9,6 +9,7 @@
 # import numpy as np
 # import imgaug
 # import skimage.io
+from lib2to3.pgen2.token import NAME
 from mrcnn import model as modellib, utils
 from mrcnn.config import Config
 import os
@@ -33,7 +34,7 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 ############################################################
 
 class ElevatorPanelConfig(Config):
-    name = "elevator_panel"
+    NAME = "elevator_panel"
 
     IMAGES_PER_GPU = 2
 
@@ -189,9 +190,9 @@ if __name__ == '__main__':
         description='Train Mask R-CNN to detect elevator panel buttons.')
     parser.add_argument("command",
                         metavar="<command>",
-                        help="'train' or 'splash'")
+                        help="train")
     parser.add_argument('--dataset', required=False,
-                        metavar="/path/to/balloon/dataset/",
+                        metavar="/path/to/elevator_panel/dataset/",
                         help='Directory of the Elevator Panel dataset')
     parser.add_argument('--weights', required=True,
                         metavar="/path/to/weights.h5",
