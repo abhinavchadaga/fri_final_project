@@ -52,7 +52,10 @@ def buttonOCR(buttonMat):
     (T, preprocessedImage) = cv2.threshold(
         buttonMat, 70, 255, cv2.THRESH_BINARY)
     preprocessedImage = cv2.bitwise_not(preprocessedImage)
-    return findBoxes(preprocessedImage, (0, 0, 255), 10, 1, 500, 1, 500, "--psm 9", 5)
+    # cv2.imshow("preprocessed image", preprocessedImage)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+    return findBoxes(preprocessedImage, (0, 0, 255), 0, 1, 500, 1, 500, "--psm 9", 5)
 
 
 # buttonImage = cv2.imread('./label.jpg')
