@@ -1,61 +1,48 @@
 from elevator_model import model
-from mrcnn import visualize
+import ocr
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage.io
+import pytesseract
 
-import warnings
-warnings.filterwarnings("ignore")
+from mrcnn import visualize
 
-path_to_image = './elevator_panels/val/0.jpg'
+path_to_image = './elevator_panels/val/2.jpg'
 img = cv2.imread(path_to_image)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-img_arr = np.asarray(img)
+img = np.asarray(img)
 
-results = model.detect([img_arr], verbose=1)
+results = model.detect([img], verbose=1)
 r = results[0]
 
+class_names = ['BG', 'label', 'button']
+
+visualize.display_instances(img, r['rois'], r['masks'], r['class_ids'],
+                            class_names, r['scores'])
 label_class = 1
 button_class = 2
 masks = r["masks"]
+masks = masks.astype(np.uint8)
 class_ids = r["class_ids"]
+label_bounding_boxes = []
+for i, box in enumerate(r['rois']):
+    if class_ids[i] == label_class:
+        label_bounding_boxes.append(box)
+print(label_bounding_boxes)
 
 label_masks = masks[:, :, np.where(class_ids == label_class)[0]]
-button_masks = masks[:, :, np.where(class_ids == button_class)[0]]
 labels = []
-buttons = []
 for i in range(label_masks.shape[2]):
-    label_tmp = skimage.io.imread('./elevator_panels/val/0.jpg')
-    button_tmp = skimage.io.imread('./elevator_panels/val/0.jpg')
-    for j in range(label_tmp.shape[2]):
-        label_tmp[:, :, j] = label_tmp[:, :, j] * label_masks[:, :, i]
-        button_tmp[:, :, j] = button_tmp[:, :, j] * button_masks[:, :, i]
-    label_tmp = cv2.resize(label_tmp, (1024, 1024))
-    button_tmp = cv2.resize(button_tmp, (1024, 1024))
-    labels.append(label_tmp)
-    buttons.append(button_tmp)
+    temp = skimage.io.imread(path_to_image)
+    box = label_bounding_boxes[i]
+    for j in range(temp.shape[2]):
+        temp[:, :, j] = temp[:, :, j] * label_masks[:, :, i]
+    temp = temp[box[0]:box[2], box[1]:box[3]]
+    labels.append(temp)
+    plt.figure(figsize=(8, 8))
+    plt.imshow(temp)
 
-for i, label in enumerate(labels):
-    cv2.imshow("label " + str(i), label.astype(np.uint8))
-    cv2.waitKey(0)
+plt.show()
 
-for i, button in enumerate(buttons):
-    cv2.imshow("label " + str(i), button.astype(np.uint8))
-    cv2.waitKey(0)
-
-cv2.destroyAllWindows()
-
-
-# cv2.imshow("label masks", m.astype(np.uint8))
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-
-# plt.imshow(m.astype(np.uint8), cmap="Blues")
-# plt.show()
-
-# class_names = ['BG', 'label', 'button']
-
-
-# visualize.display_top_masks(img_arr, r["masks"], r["class_ids"], class_names)
- 
+# use center of bounding boxes for button label association

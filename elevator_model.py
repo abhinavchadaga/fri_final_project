@@ -18,6 +18,9 @@ class ElevatorPanelConfig(Config):
     LEARNING_RATE = 0.0007
 
 
+config = ElevatorPanelConfig()
+
+
 class InferenceConfig(ElevatorPanelConfig):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
