@@ -24,6 +24,7 @@ label_class = 1
 button_class = 2
 masks = r["masks"]
 masks = masks.astype(np.uint8)
+print(masks[0].shape)
 class_ids = r["class_ids"]
 label_bounding_boxes = []
 for i, box in enumerate(r['rois']):
@@ -45,4 +46,14 @@ for i in range(label_masks.shape[2]):
 
 plt.show()
 
-# use center of bounding boxes for button label association
+cv2.cvtColor(labels[2], cv2.COLOR_BGR2GRAY)
+
+(T, preprocessedImage) = cv2.threshold(
+    labels[3], 70, 255, cv2.THRESH_BINARY)
+preprocessedImage = cv2.bitwise_not(preprocessedImage)
+
+cv2.imshow("window", preprocessedImage)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+print(pytesseract.image_to_string(preprocessedImage))
