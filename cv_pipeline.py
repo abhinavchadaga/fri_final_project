@@ -4,11 +4,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import skimage.io
-import pytesseract
 
 from mrcnn import visualize
 
-path_to_image = './elevator_panels/val/2.jpg'
+path_to_image = './elevator_panels/val/0.jpg'
 img = cv2.imread(path_to_image)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 img = np.asarray(img)
@@ -24,13 +23,11 @@ label_class = 1
 button_class = 2
 masks = r["masks"]
 masks = masks.astype(np.uint8)
-print(masks[0].shape)
 class_ids = r["class_ids"]
 label_bounding_boxes = []
 for i, box in enumerate(r['rois']):
     if class_ids[i] == label_class:
         label_bounding_boxes.append(box)
-print(label_bounding_boxes)
 
 label_masks = masks[:, :, np.where(class_ids == label_class)[0]]
 labels = []
@@ -39,21 +36,15 @@ for i in range(label_masks.shape[2]):
     box = label_bounding_boxes[i]
     for j in range(temp.shape[2]):
         temp[:, :, j] = temp[:, :, j] * label_masks[:, :, i]
-    temp = temp[box[0]:box[2], box[1]:box[3]]
+    temp = temp[box[0]:box[2], box[1] - 25:box[3] + 25]
     labels.append(temp)
     plt.figure(figsize=(8, 8))
     plt.imshow(temp)
 
 plt.show()
 
-cv2.cvtColor(labels[2], cv2.COLOR_BGR2GRAY)
-
-(T, preprocessedImage) = cv2.threshold(
-    labels[3], 70, 255, cv2.THRESH_BINARY)
-preprocessedImage = cv2.bitwise_not(preprocessedImage)
-
-cv2.imshow("window", preprocessedImage)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-print(pytesseract.image_to_string(preprocessedImage))
+for label in labels:
+    output, (rectX, rectY, rectW, rectH), text = ocr.buttonOCR(label)
+    cv2.imshow("window", output)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
