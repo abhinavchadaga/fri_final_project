@@ -9,11 +9,11 @@ pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 symbolsToWords = {
     "M": "Mezzanine",
     "2": "Floor 2",
-    "a": "Floor 1", ")": "Floor 1",
+    "a": "Floor 1", ")": "Floor 1", "*": "Floor 1",
     "D": "Door Hold",
-    "<": "Open Door",
-    "n": "Close Door", ">": "Close Door",
-    "S": "Phone", "G": "Phone", "0": "Phone",
+    "<": "Open Door", "Q": "Open Door",
+    "n": "Close Door", ">": "Close Door", "®": "Close Door",
+    "S": "Phone", "G": "Phone", "0": "Phone", "@": "Phone",
     "©": "Bell", "4": "Bell", "A": "Bell"
 }
 
@@ -25,7 +25,8 @@ def findBoxes(preprocessedImage, textClr, conf, minw, maxw, minh, maxh, configSt
     print(buttonImageBoxes['text'])
 
     for i in range(len(buttonImageBoxes['text'])):
-        if int(buttonImageBoxes['conf'][i]) > conf:
+        if buttonImageBoxes['text'] != '' and int(buttonImageBoxes['conf'][i]) > conf:
+            x, y, w, h = 0, 0, 0, 0
             (x, y, w, h) = (buttonImageBoxes['left'][i], buttonImageBoxes['top']
                             [i], buttonImageBoxes['width'][i], buttonImageBoxes['height'][i])
             if minw < w and w < maxw and minh < h and h < maxh:
@@ -47,51 +48,14 @@ def findBoxes(preprocessedImage, textClr, conf, minw, maxw, minh, maxh, configSt
 
 
 def buttonOCR(buttonMat):
-    cv2.cvtColor(buttonMat, cv2.COLOR_BGR2GRAY)
-
     (T, preprocessedImage) = cv2.threshold(
         buttonMat, 70, 255, cv2.THRESH_BINARY)
     preprocessedImage = cv2.bitwise_not(preprocessedImage)
+    preprocessedImage = cv2.medianBlur(preprocessedImage, 5)
+    preprocessedImage = cv2.GaussianBlur(preprocessedImage,(5,5),0)
+    cv2.cvtColor(preprocessedImage, cv2.COLOR_BGR2GRAY)
     # cv2.imshow("preprocessed image", preprocessedImage)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-    return findBoxes(preprocessedImage, (0, 0, 255), 0, 1, 500, 1, 500, "--psm 9", 5)
+    return findBoxes(preprocessedImage, (0, 0, 255), 10, 1, 500, 1, 500, "--psm 9", 5)
 
-
-# buttonImage = cv2.imread('./label.jpg')
-
-
-# # Starts with M - Mezzanine
-# buttonImage = buttonImage[500:900, 1100:1600]
-
-# # Starts with 2 - Floor 2
-# buttonImage = buttonImage[1000:1400, 1100:1600]
-
-# # Starts with aT or ) - Floor 1
-# buttonImage = buttonImage[1450:1850, 1100:1600]
-
-# # Starts with DH - Door Hold
-# buttonImage = buttonImage[2100:2450, 1100:1600]
-
-# # begins with < - Open Door
-# buttonImage = buttonImage[2550:2950, 650:1050]
-
-# # first letter n or > - Close Door
-# buttonImage = buttonImage[2550:2950, 1600:2000]
-
-# # Starts with @, G or 0- Phone
-# buttonImage = buttonImage[3000:3400, 650:1050]
-
-# # Starts with ©, 4, or A - Bell
-# buttonImage = buttonImage[3000:3400, 1600:2000]
-
-# # Format for return
-# openCVImage, (rectX, rectY, rectW, rectH), text = buttonOCR(buttonImage)
-
-# cv2.imshow("Image Preview", openCVImage)
-# print("X: " + str(rectX))
-# print("Y: " + str(rectY))
-# print("W: " + str(rectW))
-# print("H: " + str(rectH))
-# print(text)
-# cv2.waitKey(0)
