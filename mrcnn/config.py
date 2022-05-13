@@ -66,7 +66,7 @@ class Config(object):
     # Size of the fully-connected layers in the classification graph
     FPN_CLASSIF_FC_LAYERS_SIZE = 1024
 
-    # Size of the top-down layers used to b`ui`ld the feature pyramid
+    # Size of the top-down layers used to build the feature pyramid
     TOP_DOWN_PYRAMID_SIZE = 256
 
     # Number of classification classes (including background)
@@ -90,7 +90,7 @@ class Config(object):
 
     # How many anchors per image to use for RPN training
     RPN_TRAIN_ANCHORS_PER_IMAGE = 256
-
+    
     # ROIs kept after tf.nn.top_k and before non-maximum suppression
     PRE_NMS_LIMIT = 6000
 
@@ -218,19 +218,23 @@ class Config(object):
         # Input image size
         if self.IMAGE_RESIZE_MODE == "crop":
             self.IMAGE_SHAPE = np.array([self.IMAGE_MIN_DIM, self.IMAGE_MIN_DIM,
-                                         self.IMAGE_CHANNEL_COUNT])
+                self.IMAGE_CHANNEL_COUNT])
         else:
             self.IMAGE_SHAPE = np.array([self.IMAGE_MAX_DIM, self.IMAGE_MAX_DIM,
-                                         self.IMAGE_CHANNEL_COUNT])
+                self.IMAGE_CHANNEL_COUNT])
 
         # Image meta data length
         # See compose_image_meta() for details
         self.IMAGE_META_SIZE = 1 + 3 + 3 + 4 + 1 + self.NUM_CLASSES
 
+    def to_dict(self):
+        return {a: getattr(self, a)
+                for a in sorted(dir(self))
+                if not a.startswith("__") and not callable(getattr(self, a))}
+
     def display(self):
         """Display Configuration values."""
         print("\nConfigurations:")
-        for a in dir(self):
-            if not a.startswith("__") and not callable(getattr(self, a)):
-                print("{:30} {}".format(a, getattr(self, a)))
+        for key, val in self.to_dict().items():
+            print(f"{key:30} {val}")
         print("\n")

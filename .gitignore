@@ -2,3 +2,5 @@ __pycache__
 mask_rcnn_coco.h5
 mask_rcnn_elevator_panel.h5
 logs
+labels
+mrcnn/__pycache__/*
