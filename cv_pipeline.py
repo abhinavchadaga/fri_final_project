@@ -64,7 +64,7 @@ def detect(path_to_image, button_text):
             labels[i], 70, 255, cv2.THRESH_BINARY)
         cv2.cvtColor(preprocessedImage, cv2.COLOR_BGR2GRAY)
         preprocessedImage = np.array(preprocessedImage)
-        kernel_size = 15
+        kernel_size = 3
         kernel = np.ones((kernel_size, kernel_size), np.uint8)
         preprocessedImage = cv2.morphologyEx(
             preprocessedImage, cv2.MORPH_OPEN, kernel)
@@ -87,7 +87,7 @@ def detect(path_to_image, button_text):
     # ocr_output = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     # cv2.imwrite("./ocr_output.jpg", ocr_output)
 
-    # visualize.display_images(processed_labels)
+    visualize.display_images(processed_labels)
 
     try:
         selected_label_bounding_box = label_bounding_boxes[label_contents.index(

@@ -9,13 +9,31 @@ pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 symbolsToWords = {
     "M": "Mezzanine",
-    "2": "Floor 2",
-    "a": "Floor 1", ")": "Floor 1", "*": "Floor 1", "x": "Floor 1", "1": "Floor 1", "x1": "Floor 1", "«1": "Floor 1", "*1": "Floor 1", "*|": "Floor 1",
+    "a": "Floor 1", ")": "Floor 1", "*": "Floor 1", "x": "Floor 1", "1": "Floor 1", "x1": "Floor 1", "«1": "Floor 1", "*1": "Floor 1", "*|": "Floor 1", "d": "Floor 1", 
     "DF": "Door Hold", "DH": "Door Hold",
-    "<": "Open Door", "Q": "Open Door", "<I»": "Open Door", "4d": "Open Door", "did": "Open Door",
-    "nd": "Close Door", ">": "Close Door", "®": "Close Door", "bid": "Close Door",
+    "<": "Open Door", "Q": "Open Door", "<I»": "Open Door", "4d": "Open Door", "did": "Open Door", "<i>": "Open Door",
+    "nd": "Close Door", ">": "Close Door", "®": "Close Door", "bid": "Close Door", "vi": "Close Door",
     "S": "Phone", "G": "Phone", "0": "Phone", "@": "Phone", "(": "Phone",
-    "©": "Bell", "4": "Bell", "A": "Bell", "4.": "Bell", "A.": "Bell"
+    "©": "Bell", "4": "Bell", "A": "Bell", "4.": "Bell", "A.": "Bell",
+    "1": "Floor 1",
+    "2": "Floor 2",
+    "3": "Floor 3",
+    "4": "Floor 4",
+    "5": "Floor 5",
+    "6": "Floor 6",
+    "7": "Floor 7",
+    "8": "Floor 8",
+    "9": "Floor 9",
+    "10": "Floor 10",
+    "11": "Floor 11",
+    "12": "Floor 12",
+    "13": "Floor 13",
+    "14": "Floor 14",
+    "15": "Floor 15",
+    "16": "Floor 16",
+    "17": "Floor 17",
+    "18": "Floor 18",
+    "19": "Floor 19",
 }
 
 
