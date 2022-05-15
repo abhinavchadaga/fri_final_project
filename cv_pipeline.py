@@ -7,7 +7,6 @@ from mrcnn import visualize
 
 
 def detect(path_to_image, button_text):
-
     class_names = ['BG', 'label', 'button']
 
     img = cv2.imread(path_to_image)
@@ -52,7 +51,7 @@ def detect(path_to_image, button_text):
         box = label_bounding_boxes[i]
         for j in range(temp.shape[2]):
             temp[:, :, j] = temp[:, :, j] * label_masks[:, :, i]
-        temp = temp[box[0]-25:box[2]+25, box[1]-50:box[3]+50]
+        temp = temp[box[0] - 25:box[2] + 25, box[1] - 50:box[3] + 50]
         labels.append(temp)
 
     # visualize.display_images(labels)
@@ -60,32 +59,38 @@ def detect(path_to_image, button_text):
     processed_labels = []
     label_contents = []
     for i in range(len(labels)):
-        (T, preprocessedImage) = cv2.threshold(
+        (T, preprocessed_image) = cv2.threshold(
             labels[i], 70, 255, cv2.THRESH_BINARY)
-        cv2.cvtColor(preprocessedImage, cv2.COLOR_BGR2GRAY)
-        preprocessedImage = np.array(preprocessedImage)
-        kernel_size = 3
+        cv2.cvtColor(preprocessed_image, cv2.COLOR_BGR2GRAY)
+        preprocessed_image = np.array(preprocessed_image)
+        kernel_size = 15
         kernel = np.ones((kernel_size, kernel_size), np.uint8)
-        preprocessedImage = cv2.morphologyEx(
-            preprocessedImage, cv2.MORPH_OPEN, kernel)
-        preprocessedImage = cv2.bitwise_not(preprocessedImage)
-        processed_labels.append(preprocessedImage)
+        preprocessed_image = cv2.morphologyEx(
+            preprocessed_image, cv2.MORPH_OPEN, kernel)
+        preprocessed_image = cv2.bitwise_not(preprocessed_image)
+        processed_labels.append(preprocessed_image)
 
         try:
             output, (rectX, rectY, rectW,
-                     rectH), text = ocr.buttonOCR(preprocessedImage)
+                     rectH), text = ocr.button_ocr(preprocessed_image)
             label_contents.append(text)
         except:
             text = "Not Recognized"
             label_contents.append(text)
 
-        textSize = cv2.getTextSize(
+        text_size = cv2.getTextSize(
             text, fontFace=cv2.FONT_HERSHEY_TRIPLEX, fontScale=2, thickness=3)
-        cv2.putText(img=img, text=text, org=(int(label_bounding_boxes[i][1] + (label_bounding_boxes[i][3]-label_bounding_boxes[i][1])/2 - textSize[0][0]/2), int(
-            label_bounding_boxes[i][2]-30)), fontFace=cv2.FONT_HERSHEY_TRIPLEX, fontScale=2, color=(255, 255, 255), thickness=3)
+        cv2.putText(img=img, text=text, org=(int(label_bounding_boxes[i][1] + (
+                label_bounding_boxes[i][3] - label_bounding_boxes[i][1]) / 2 - text_size[0][
+                                                     0] / 2), int(
+            label_bounding_boxes[i][2] - 30)), fontFace=cv2.FONT_HERSHEY_TRIPLEX, fontScale=2,
+                    color=(255, 255, 255), thickness=3)
 
-    # ocr_output = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    ocr_output = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     # cv2.imwrite("./ocr_output.jpg", ocr_output)
+    cv2.imshow("window", ocr_output)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     visualize.display_images(processed_labels)
 
@@ -101,7 +106,7 @@ def detect(path_to_image, button_text):
 
         for i, button_bounding_box in enumerate(button_bounding_boxes):
             midpoint = (button_bounding_box[0] + button_bounding_box[2]) / 2
-            if midpoint > y1 and midpoint < y2 and button_bounding_box[1] > x2:
+            if y1 < midpoint < y2 and button_bounding_box[1] > x2:
                 possible_buttons_idx.append(i)
 
         tgt_btn = button_bounding_boxes[possible_buttons_idx[0]]
@@ -123,8 +128,8 @@ def detect(path_to_image, button_text):
         # print(np.array(button_masks[:, :, tgt_idx:(tgt_idx+1)]).shape)
 
         visualize.display_instances(img, np.array([button_bounding_boxes[tgt_idx]]), np.array(
-            button_masks[:, :, tgt_idx:(tgt_idx+1)]), np.array([button_class]), class_names, title="selecting " + button_text)
-
+            button_masks[:, :, tgt_idx:(tgt_idx + 1)]), np.array([button_class]), class_names,
+                                    title="selecting " + button_text)
         return 1
     except:
         visualize.display_images([img])
