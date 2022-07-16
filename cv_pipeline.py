@@ -16,8 +16,8 @@ def detect(path_to_image, button_text):
     results = model.detect([img], verbose=1)
     r = results[0]
 
-    visualize.display_instances(
-        img, r["rois"], r["masks"], r["class_ids"], class_names, r["scores"])
+    # visualize.display_instances(
+    #     img, r["rois"], r["masks"], r["class_ids"], class_names, r["scores"])
 
     label_class = 1
     button_class = 2
@@ -88,11 +88,11 @@ def detect(path_to_image, button_text):
 
     ocr_output = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     # cv2.imwrite("./ocr_output.jpg", ocr_output)
-    cv2.imshow("window", ocr_output)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("window", ocr_output)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
-    visualize.display_images(processed_labels)
+    # visualize.display_images(processed_labels)
 
     try:
         selected_label_bounding_box = label_bounding_boxes[label_contents.index(
