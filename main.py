@@ -13,6 +13,6 @@ button_ops = ["Mezzanine", "Floor 2", "Floor 1",
 #         print("correct: ", correct, " total: ", count)
 
 cv_pipeline.detect(
-    "./elevator_panels/val/{file}.jpg".format(file=16), "Floor 1")
+    "./elevator_panels/val/{file}.jpg".format(file=0), "Floor 1")
 
 # print("result: ", correct / count)

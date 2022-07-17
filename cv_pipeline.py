@@ -95,9 +95,7 @@ def detect(path_to_image, button_text):
     # visualize.display_images(processed_labels)
 
     try:
-        selected_label_bounding_box = label_bounding_boxes[label_contents.index(
-            button_text)]
-
+        selected_label_bounding_box = label_bounding_boxes[label_contents.index(button_text)]
         y1 = selected_label_bounding_box[0]
         y2 = selected_label_bounding_box[2]
         x2 = selected_label_bounding_box[3]

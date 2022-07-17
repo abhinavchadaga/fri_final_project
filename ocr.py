@@ -8,16 +8,12 @@ import pytesseract
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
 symbolsToWords = {
-    "M": "Mezzanine",
-    "a": "Floor 1", ")": "Floor 1", "*": "Floor 1", "x": "Floor 1", "x1": "Floor 1",
-    "«1": "Floor 1", "*1": "Floor 1", "*|": "Floor 1", "d": "Floor 1",
-    "DF": "Door Hold", "DH": "Door Hold",
-    "<": "Open Door", "Q": "Open Door", "<I»": "Open Door", "4d": "Open Door", "did": "Open Door",
-    "<i>": "Open Door",
-    "nd": "Close Door", ">": "Close Door", "®": "Close Door", "bid": "Close Door",
-    "vi": "Close Door",
-    "S": "Phone", "G": "Phone", "0": "Phone", "@": "Phone", "(": "Phone",
-    "©": "Bell", "A": "Bell", "4.": "Bell", "A.": "Bell",
+    "m": "Mezzanine",
+    "h": "Door Hold",
+    "o": "Open Door",
+    "c": "Close Door",
+    "p": "Phone",
+    "b": "Bell",
     "1": "Floor 1",
     "2": "Floor 2",
     "3": "Floor 3",
@@ -61,7 +57,7 @@ def find_boxes(preprocessed_image, text_clr, conf, minw, maxw, minh, maxh, confi
                 # if button_image_boxes['text'][i] in symbolsToWords:
                 #     label = symbolsToWords.get(button_image_boxes['text'][i])
                 
-                label = button_image_boxes['text'][i]
+                label = symbolsToWords.get(button_image_boxes['text'][i])
 
                 cv2.rectangle(preprocessed_image, pt1=(x, y), pt2=(
                     x + w, y + h), color=text_clr, thickness=stroke_width)
